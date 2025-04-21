@@ -14,15 +14,6 @@ def get_daily_picks():
     }
     return pd.DataFrame(data)
 
-def get_sharp_money():
-    data = {
-        'Game': ['Giants vs Angels', 'Cavs vs Heat'],
-        '% Bets': [61, 48],
-        '% Money': [81, 74],
-        'Sharp Indicator': ['✅', '✅']
-    }
-    return pd.DataFrame(data)
-
 def bankroll_tracker():
     st.subheader("📊 Bankroll Tracker")
     if 'bankroll' not in st.session_state:
@@ -49,15 +40,34 @@ def bankroll_tracker():
     total_profit = st.session_state['bankroll']['Profit/Loss'].sum()
     st.write(f"**Total Profit/Loss: ${round(total_profit, 2)}**")
 
-st.set_page_config(page_title="DegenFamm Betting App", layout="wide")
+# Set page configuration
+st.set_page_config(page_title="DegenFamm Sports Betting Dashboard", layout="wide")
 st.title("💸 DegenFamm Sports Betting Dashboard")
 
-tab1, tab2, tab3 = st.tabs(["🔥 Daily Picks", "🧠 Sharp Money", "💼 Bankroll"])
+# Load picks
+all_picks = get_daily_picks()
+mlb_picks = all_picks[all_picks['Sport'] == 'MLB']
+nba_picks = all_picks[all_picks['Sport'] == 'NBA']
+
+# Define tabs
+tab1, tab2, tab3 = st.tabs(["🏀 NBA Picks", "⚾ MLB Picks", "💼 Bankroll"])
+
+# NBA Tab
 with tab1:
-    st.subheader("Today's Model Picks")
-    st.dataframe(get_daily_picks())
+    st.subheader("Today's NBA Picks")
+    if not nba_picks.empty:
+        st.dataframe(nba_picks)
+    else:
+        st.info("No NBA picks available today.")
+
+# MLB Tab
 with tab2:
-    st.subheader("Sharp vs. Public Money")
-    st.dataframe(get_sharp_money())
+    st.subheader("Today's MLB Picks")
+    if not mlb_picks.empty:
+        st.dataframe(mlb_picks)
+    else:
+        st.info("No MLB picks available today.")
+
+# Bankroll Tracker Tab
 with tab3:
     bankroll_tracker()
