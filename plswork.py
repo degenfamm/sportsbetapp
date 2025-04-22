@@ -1,5 +1,6 @@
-import os
+import streamlit as st
 import pandas as pd
+import os
 
 def inject_daily_picks():
     today = "2025-04-22"
@@ -76,13 +77,12 @@ def inject_daily_picks():
         }
     ])
 
-    # Create directory if it doesn't exist
-    output_dir = os.path.join("data", "processed")
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs("data/processed", exist_ok=True)
+    nba_picks.to_csv("data/processed/nba_features_2025-04-22.csv", index=False)
+    mlb_picks.to_csv("data/processed/mlb_features_2025-04-22.csv", index=False)
 
-    nba_picks.to_csv(os.path.join(output_dir, f"nba_features_{today}.csv"), index=False)
-    mlb_picks.to_csv(os.path.join(output_dir, f"mlb_features_{today}.csv"), index=False)
-    print("✅ Injected NBA and MLB picks for", today)
-
-if __name__ == '__main__':
+# Streamlit button to trigger the function
+st.title("Inject Model Picks")
+if st.button("Inject 3 NBA & 3 MLB picks for April 22, 2025"):
     inject_daily_picks()
+    st.success("✅ Model picks injected successfully!")
