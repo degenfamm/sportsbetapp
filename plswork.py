@@ -1,6 +1,4 @@
-# Combine the processed pick injection script into the model project as a single module
-
-inject_picks_script = """
+import os
 import pandas as pd
 
 def inject_daily_picks():
@@ -78,19 +76,13 @@ def inject_daily_picks():
         }
     ])
 
-    nba_picks.to_csv(f"data/processed/nba_features_{today}.csv", index=False)
-    mlb_picks.to_csv(f"data/processed/mlb_features_{today}.csv", index=False)
-    print("Daily picks injected for April 22, 2025.")
+    # Create directory if it doesn't exist
+    output_dir = os.path.join("data", "processed")
+    os.makedirs(output_dir, exist_ok=True)
+
+    nba_picks.to_csv(os.path.join(output_dir, f"nba_features_{today}.csv"), index=False)
+    mlb_picks.to_csv(os.path.join(output_dir, f"mlb_features_{today}.csv"), index=False)
+    print("✅ Injected NBA and MLB picks for", today)
 
 if __name__ == '__main__':
     inject_daily_picks()
-"""
-
-# Save the picks injection script to the project
-with open("sports_betting_model/src/models/inject_picks.py", "w") as f:
-    f.write(inject_picks_script)
-
-# Repackage everything into a final unified model build
-shutil.make_archive("sports_betting_model_full_combined", 'zip', "sports_betting_model")
-
-"sports_betting_model_full_combined.zip created with model + daily picks injector."
